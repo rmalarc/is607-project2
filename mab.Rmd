@@ -1,7 +1,7 @@
 ---
 title: "IS607 - Project 2"
 author: "Mauricio Alarcon, Jamey Etherton"
-date: "March 3, 2015"
+date: "March 14, 2015"
 output: html_document
 ---
 
@@ -45,7 +45,7 @@ project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
 
 ##<a name="introduction"></a>Introduction
 
-As part of the IS606 class, we're provided with a PDF file containing a data set. The data set appears to contain two variables (X,Y), and the respective values across four groups (I,II,III,IV)
+As part of the IS607 class, we're provided with a PDF file containing a data set. The data set appears to contain two variables (X,Y), and the respective values across four groups (I,II,III,IV)
 
 We're given this data for a reason: to Analyze it!.
 
