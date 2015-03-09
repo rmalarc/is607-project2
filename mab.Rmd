@@ -90,7 +90,6 @@ aggregate(project2_data$x,list(Group=project2_data$group),FUN=summary)
 
 # Show X-Variable values and frequency of each
 dcast(project2_data, group ~ x, value.var="x",fun.aggregate=length)
-
 ```
 
 From the summary and plot above we can see how the values of x appear to be identical in groups I, II and III, with X being an integer uniformly distributed with values spanning from 4 to 14.
@@ -144,12 +143,6 @@ fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="I",])
 ggplotRegression(fit1)
 
 
-#qplot(x,y, data=project2_data[project2_data$group=="I",],
-#      color=group, shape=group,
-#      geom=c("point", "smooth"),
-#      method="lm", formula=y~x,
-#      xlab="X", ylab="Y",
-#      main="Regression of Values X~Y for Group I")
 ```
 
 From the above chart we can see that the data in group I does follow a linear trend, with acceptable R2 and p-values.
