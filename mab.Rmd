@@ -17,6 +17,7 @@ output: html_document
         * [Group II](#group_ii)
         * [Group III](#group_iii)
         * [Group IV](#group_iv)
+* [Outlier Handling](#outlier)
 * [Data Modeling](#data_modeling)
     * [Group I](#group_i_m)
     * [Group II](#group_ii_m)
@@ -39,6 +40,8 @@ library("RCurl")
 # get files from CSV in github
 project2_data_csv <- getURL("https://raw.githubusercontent.com/rmalarc/is607-project2/master/project2_data.csv")
 project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
+#project2_data_csv <- "/Users/malarcon/Google Drive/CUNY/IS607/is607-project2/project2_data.csv"
+#project2_data <- read.csv(project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
 
 ```
 
@@ -123,13 +126,13 @@ For this part of the analysis we plot the (x,y) value pairs alongside a linear a
 ####<a name="group_i"></a>Group I
 
 ```{r, echo=FALSE}
-ggplotRegression <- function (fit) {
+ggplotRegression <- function (fit,color="red") {
 
 require(ggplot2)
 
 ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
   geom_point() +
-  stat_smooth(method = "lm", col = "red") +
+  stat_smooth(method = "lm", col = color) +
   labs(title = paste("y=",signif(fit$coef[[2]], 2),
                      "x +",signif(fit$coef[[1]],2 ),
                      ", Adj R2=",signif(summary(fit)$adj.r.squared, 5),
@@ -194,7 +197,80 @@ However, it does not appear that the resulting function would be much different 
 [[Back to Top]](#toc)
 
 * * *
+##<a name="outlier"></a>Outlier Handling
+
+For the purpose of fitting the data to a model, we will apply the following manipulations to the data (by group):
+
+* I: Even though the R-squared is relatively low, the fitness to a linear model is not being skewed by outliers but it is intrinsic to the data. Therefore, we will use the data directly without any modifications.
+* II: In this case, we will attempt to fit the data to a polynomial model without making any modifications to the data.
+* III: There is clearly one outlier which throws the linear model in the wrong direction (x=13,y=12.74). We will remove this data-point in order to obtain a model that more adequately fits the remaining of the data.
+* IV: There appear to be multiple Y observations for X=8. We will aggregate these multiple observations into one by averaging all the corresponding Y values. 
+
+[[Back to Top]](#toc)
+
+* * *
 ##<a name="data_modeling"></a>Data Modeling
+
+####<a name="group_i_m"></a>Group I
+
+```{r, echo=FALSE}
+
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="I",])
+ggplotRegression(fit1,color="springgreen4")
+
+```
+
+[[Back to Top]](#toc)
+
+####<a name="group_ii_m"></a>Group II
+
+```{r, echo=FALSE}
+ggplotRegression_squared <- function (fit,color="red") {
+
+require(ggplot2)
+
+test <- function(x) {fit$coef[[3]]*x^2+fit$coef[[2]]*x+fit$coef[[1]]}
+ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+  geom_point() +
+  stat_function(fun = test, col = color) +
+  labs(title = paste("y=",signif(fit$coef[[3]], 2),"x^2 +"
+                     ,signif(fit$coef[[2]], 2),
+                     "x +",signif(fit$coef[[1]],2 ),
+                     ", Adj R2=",signif(summary(fit)$adj.r.squared, 5),
+                     ", p=",signif(summary(fit)$coef[2,4], 5)))
+}
+
+fit1 <- lm(y ~ x+ I(x^2), data = project2_data[project2_data$group=="II",])
+ggplotRegression_squared(fit1,color="springgreen4")
+
+```
+
+[[Back to Top]](#toc)
+
+####<a name="group_iii_m"></a>Group III
+
+```{r, echo=FALSE}
+
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="III"&project2_data$x!=13,])
+ggplotRegression(fit1,color="springgreen4")
+
+```
+
+[[Back to Top]](#toc)
+
+####<a name="group_iii_m"></a>Group IV
+
+```{r, echo=FALSE, warning=FALSE}
+series4 <- project2_data[project2_data$group=="IV",]
+series4<-rbind(data.frame(group="IV"
+                          ,x=8
+                          ,y=mean(series4[series4$x==8,"y"]))
+               ,series4[series4$x!=8,]
+               )
+fit1 <- lm(y ~ x, data = series4)
+ggplotRegression(fit1,color="springgreen4")
+
+```
 
 [[Back to Top]](#toc)
 
@@ -203,3 +279,7 @@ However, it does not appear that the resulting function would be much different 
 ##<a name="conclusion"></a>Conclusion
 
 [[Back to Top]](#toc)
+
+One has to be careful when trying to handle outliers in the data. First, it must be clear what the goal is. As we saw in this project the goal was to obtain a good linear or polynomial fit.
+
+With that goal clear, we retain, removed or aggregated data or adjusted to a more suitable model.
