@@ -1,0 +1,205 @@
+---
+title: "IS607 - Project 2"
+author: "Mauricio Alarcon, Jamey Etherton"
+date: "March 3, 2015"
+output: html_document
+---
+
+* * *
+
+##<a name="toc"></a>Table of Contents
+* [Introduction](#introduction)
+* [Methodology](#methodology)
+* Exploratory Analysis
+    * [Descriptive Statistics](#descriptive_statistics)
+    * [y=f(x)](#y_fx)
+        * [Group I](#group_i)
+        * [Group II](#group_ii)
+        * [Group III](#group_iii)
+        * [Group IV](#group_iv)
+* [Data Modeling](#data_modeling)
+    * [Group I](#group_i_m)
+    * [Group II](#group_ii_m)
+    * [Group III](#group_iii_m)
+    * [Group IV](#group_iv_m)
+* [Conclusion](#conclusion)
+
+* * *
+
+```{r, echo=FALSE,results = 'hide', warning=FALSE, message=FALSE}
+library("ggplot2")
+library("boot")
+library("pastecs")
+library("reshape")
+library("lattice")
+library("Hmisc")
+library("reshape2")
+library("RCurl")
+
+# get files from CSV in github
+project2_data_csv <- getURL("https://raw.githubusercontent.com/rmalarc/is607-project2/master/project2_data.csv")
+project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
+
+```
+
+
+##<a name="introduction"></a>Introduction
+
+As part of the IS606 class, we're provided with a PDF file containing a data set. The data set appears to contain two variables (X,Y), and the respective values across four groups (I,II,III,IV)
+
+We're given this data for a reason: to Analyze it!.
+
+[[Back to Top]](#toc)
+
+* * *
+
+##<a name="methodology"></a>Methodology
+
+The methodology of this analysis consists of:
+
+* Capture provided data in CSV format with the following columns: group, x, y
+* Load the data into R
+* Conduct exploratory analysis including: 
+    * Obtain descriptive statistics by group
+    * Produce basic y~x charts including linear fitting curve
+    * Result interpretation
+* Data Modeling
+
+[[Back to Top]](#toc)
+
+* * *
+##Exploratory Analysis
+
+###<a name="descriptive_statistics"></a>Descriptive Statistics
+
+#### X Variable
+```{r, echo=FALSE}
+
+qplot(group,x, data=project2_data, geom=c("boxplot"),
+      fill=group,
+      main="Distribution of X Values by Group",
+      xlab= "Group",
+      ylab="X")+
+  scale_fill_discrete(name="Group")+ guides(fill=FALSE)
+
+options(digits=2)
+aggregate(project2_data$x,list(Group=project2_data$group),FUN=summary)
+
+# Show X-Variable values and frequency of each
+dcast(project2_data, group ~ x, value.var="x",fun.aggregate=length)
+
+```
+
+From the summary and plot above we can see how the values of x appear to be identical in groups I, II and III, with X being an integer uniformly distributed with values spanning from 4 to 14.
+
+Group IV however, has only two numerical values: Y=10 (n=10) and Y=19 (n=1).
+
+[[Back to Top]](#toc)
+
+#### Y Variable
+```{r, echo=FALSE}
+
+qplot(group,y, data=project2_data, geom=c("boxplot"),
+      fill=group,
+      main="Distribution of Y Values by Group",
+      xlab= "Group",
+      ylab="Y")+
+  scale_fill_discrete(name="Group")+ guides(fill=FALSE)
+
+aggregate(project2_data$y,list(Group=project2_data$group),FUN=summary)
+
+```
+
+Aside from the fact that the mean of Y across all groups is 7.5, the distribution of its values is different across groups.
+
+[[Back to Top]](#toc)
+
+###<a name="y_fx"></a>y=f(x)
+
+Given the fact that there are differences in the basic distribution of X,Y values, we break the analysis of these combinations for each of the groups (I,II,III,IV).
+
+For this part of the analysis we plot the (x,y) value pairs alongside a linear approximation.
+
+####<a name="group_i"></a>Group I
+
+```{r, echo=FALSE}
+ggplotRegression <- function (fit) {
+
+require(ggplot2)
+
+ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red") +
+  labs(title = paste("y=",signif(fit$coef[[2]], 2),
+                     "x +",signif(fit$coef[[1]],2 ),
+                     ", Adj R2=",signif(summary(fit)$adj.r.squared, 5),
+                     ", p=",signif(summary(fit)$coef[2,4], 5)))
+}
+
+
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="I",])
+ggplotRegression(fit1)
+
+
+#qplot(x,y, data=project2_data[project2_data$group=="I",],
+#      color=group, shape=group,
+#      geom=c("point", "smooth"),
+#      method="lm", formula=y~x,
+#      xlab="X", ylab="Y",
+#      main="Regression of Values X~Y for Group I")
+```
+
+From the above chart we can see that the data in group I does follow a linear trend, with acceptable R2 and p-values.
+
+[[Back to Top]](#toc)
+
+####<a name="group_ii"></a>Group II
+
+```{r, echo=FALSE}
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="II",])
+ggplotRegression(fit1)
+```
+
+Here we see that group II's regression output are identical to those of group I. However, it is evident that a quadratic approximation may be a better fit.
+
+[[Back to Top]](#toc)
+
+####<a name="group_iii"></a>Group III
+
+```{r, echo=FALSE}
+
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="III",])
+ggplotRegression(fit1)
+
+```
+
+In this case we can see the presence of an outlier (13,12.7). This value clearly skews the curve. If removed, a much better fit can be obtained.
+
+[[Back to Top]](#toc)
+
+####<a name="group_iv"></a>Group IV
+
+```{r, echo=FALSE}
+
+fit1 <- lm(y ~ x, data = project2_data[project2_data$group=="IV",])
+ggplotRegression(fit1)
+
+
+```
+
+This series appears to include multiple Y observations for X=8. The average of these multiple Y values can be used instead.
+
+However, it does not appear that the resulting function would be much different than y=0.5x + 3.
+
+[[Back to Top]](#toc)
+
+* * *
+##<a name="data_modeling"></a>Data Modeling
+
+[[Back to Top]](#toc)
+
+* * *
+
+##<a name="conclusion"></a>Conclusion
+
+[[Back to Top]](#toc)
