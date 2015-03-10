@@ -48,9 +48,13 @@ project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
 
 ##<a name="introduction"></a>Introduction
 
-As part of the IS607 class, we're provided with a PDF file containing a data set. The data set appears to contain two variables (X,Y), and the respective values across four groups (I,II,III,IV)
-
-We're given this data for a reason: to Analyze it!.
+Project 2 of IS607 class requires to perform an exploratory data analysis of the given four data sets.
+The data sets are consisted with two variables (X,Y), and the respective values across four groups (I,II,III,IV).
+Our objects in this analysis are;
+ - to suggest hypotheses about the cause of observed phenomena,
+ - to assess assumptions on which statistical inference will be based,
+ - to support the selection of appropriate statistical tools and techniques.
+ 
 
 [[Back to Top]](#toc)
 
@@ -92,9 +96,9 @@ aggregate(project2_data$x,list(Group=project2_data$group),FUN=summary)
 dcast(project2_data, group ~ x, value.var="x",fun.aggregate=length)
 ```
 
-From the summary and plot above we can see how the values of x appear to be identical in groups I, II and III, with X being an integer uniformly distributed with values spanning from 4 to 14.
+From the summary and plot above we identified that the values of x in groups I, II and III are identical , with X being an integer uniformly distributed with values spanning from 4 to 14.
 
-Group IV however, has only two numerical values: Y=10 (n=10) and Y=19 (n=1).
+Group IV however, has only two numerical values: X=8 (n=10) and X=19 (n=1) having the same mean value as group I,II, and III. 
 
 [[Back to Top]](#toc)
 
@@ -120,9 +124,10 @@ Aside from the fact that the mean of Y across all groups is 7.5, the distributio
 
 Given the fact that there are differences in the basic distribution of X,Y values, we break the analysis of these combinations for each of the groups (I,II,III,IV).
 
-For this part of the analysis we plot the (x,y) value pairs alongside a linear approximation.
+For this part of the analysis we plot the (x,y) value to formulate the relationship between X and Y pairs alongside a linear approximation.
 
 ####<a name="group_i"></a>Group I
+
 
 ```{r, echo=FALSE}
 ggplotRegression <- function (fit,color="red") {
@@ -146,6 +151,7 @@ ggplotRegression(fit1)
 ```
 
 From the above chart we can see that the data in group I does follow a linear trend, with acceptable R2 and p-values.
+
 
 [[Back to Top]](#toc)
 
@@ -273,6 +279,13 @@ ggplotRegression(fit1,color="springgreen4")
 
 [[Back to Top]](#toc)
 
-One has to be careful when trying to handle outliers in the data. First, it must be clear what the goal is. As we saw in this project the goal was to obtain a good linear or polynomial fit.
+1.Hypotheses; X variables are predictor and Y variables are response. 
 
+2.Assumption; Based on the linear regression analysis we identified that X and Y move in the same direction without major outliers except
+group 4. Under this assumption, we should flag outliers to validate the data quality. One has to be careful when trying to handle outliers in the data.
+First, it must be clear what the goal is. As we saw in this project the goal was to obtain a good linear or polynomial fit.
 With that goal clear, we retain, removed or aggregated data or adjusted to a more suitable model.
+
+3.Selection of technique; Simple linear regression is suitable to analyze each set of data since there are only two variables 
+in each set. However, multiple linear regression with interactions would be another option for the 4 data sets if the goal is to
+find out the relationship of the data sets. Our goal was to obtain a good linear regression.
