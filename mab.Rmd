@@ -49,13 +49,16 @@ project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
 ##<a name="introduction"></a>Introduction
 
 Project 2 of IS607 class requires to perform an exploratory data analysis of the given four data sets.
-The data sets are consisted with two variables (X,Y), and the respective values across four groups (I,II,III,IV).
-Our objects in this analysis are;
- - to suggest hypotheses about the cause of observed phenomena,
- - to assess assumptions on which statistical inference will be based,
- - to support the selection of appropriate statistical tools and techniques.
- 
 
+The data sets are consisted with two variables (X,Y), and the respective values across four groups (I,II,III,IV).
+
+Our objectives in this analysis are:
+
+* Identifying data quality issues.
+* Suggest hypotheses about the cause of observed phenomena.
+* Assess assumptions on which statistical inference will be based.
+* Support the selection of appropriate statistical tools and techniques.
+ 
 [[Back to Top]](#toc)
 
 * * *
@@ -71,6 +74,8 @@ The methodology of this analysis consists of:
     * Produce basic y~x charts including linear fitting curve
     * Result interpretation
 * Data Modeling
+    * Outlier handling
+    * Utilization of linear of polynomial regression models
 
 [[Back to Top]](#toc)
 
@@ -277,15 +282,10 @@ ggplotRegression(fit1,color="springgreen4")
 
 ##<a name="conclusion"></a>Conclusion
 
+1. Hypotheses: We proved that X variables are predictors and Y variables are response across all groups of observations.
+
+2. Assumption: Based on the regression analysis we identified that X and Y move in the same direction without major outliers except in groups III and IV. Under this assumption, we handled outliers in order to improve the quality of the data. One has to be careful when trying to handle outliers in the data. We retain, removed or aggregated data or adjusted with the goal of obtaining a better fit to either a linear or polynomial model.
+
+3. Selection of technique: Simple linear or polynomial regression is suitable to analyze each set of data since there are only two variables in each set. However, multiple linear regression with interactions would be another option for the data sets if the goal is to find out the relationship of the data sets. Our goal was to obtain a good linear regression.
+
 [[Back to Top]](#toc)
-
-1.Hypotheses; X variables are predictor and Y variables are response. 
-
-2.Assumption; Based on the linear regression analysis we identified that X and Y move in the same direction without major outliers except
-group 4. Under this assumption, we should flag outliers to validate the data quality. One has to be careful when trying to handle outliers in the data.
-First, it must be clear what the goal is. As we saw in this project the goal was to obtain a good linear or polynomial fit.
-With that goal clear, we retain, removed or aggregated data or adjusted to a more suitable model.
-
-3.Selection of technique; Simple linear regression is suitable to analyze each set of data since there are only two variables 
-in each set. However, multiple linear regression with interactions would be another option for the 4 data sets if the goal is to
-find out the relationship of the data sets. Our goal was to obtain a good linear regression.
