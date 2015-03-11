@@ -48,7 +48,7 @@ project2_data <- read.csv(text=project2_data_csv,head=TRUE,sep=",",as.is=TRUE)
 
 ##<a name="introduction"></a>Introduction
 
-Project 2 of IS607 class requires to perform an exploratory data analysis of the given four data sets.
+Project 2 of IS607 class requires to perform an exploratory data analysis of the given four data sets. 
 
 The data sets are consisted with two variables (X,Y), and the respective values across four groups (I,II,III,IV).
 
