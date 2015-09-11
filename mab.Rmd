@@ -2,7 +2,7 @@
 title: "IS607 - Project 2"
 author: "Mauricio Alarcon, Jamey Etherton"
 date: "March 14, 2015"
-output: html_document
+output: pdf_document
 ---
 
 * * *
